@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf_field with context %}
+
+{% block title %}Mailgun Settings{% endblock %}
+
+{% block content %}
+<h1>Mailgun</h1>
+
+<div class="card">
+    <h2>Configuration</h2>
+    {% if config %}
+    <div class="alert alert--info" style="margin-bottom:1em;">
+        <strong>Status:</strong> {% if addon and addon.is_enabled %}Enabled{% else %}Disabled{% endif %}
+    </div>
+    {% endif %}
+
+    <form method="post" action="/admin/notifications/mailgun/save" class="form">
+        {{ csrf_field() }}
+        <div class="form-group">
+            <label for="api_key">API Key</label>
+            <input type="password" id="api_key" name="api_key" value="{{ config.get('api_key', '') }}" />
+        </div>
+        <div class="form-group">
+            <label for="domain">Sending Domain</label>
+            <input type="text" id="domain" name="domain" value="{{ config.get('domain', '') }}"
+                   placeholder="mg.yourdomain.com" />
+        </div>
+        <div class="form-group">
+            <label for="from_address">From Address</label>
+            <input type="email" id="from_address" name="from_address"
+                   value="{{ config.get('from_address', '') }}" />
+        </div>
+        <div class="form-group">
+            <label for="region">Region</label>
+            <select id="region" name="region">
+                <option value="us" {% if config.get('region', 'us') == 'us' %}selected{% endif %}>US</option>
+                <option value="eu" {% if config.get('region') == 'eu' %}selected{% endif %}>EU</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="is_enabled" {% if addon and addon.is_enabled %}checked{% endif %} />
+                Only one provider per channel can be enabled at a time.
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn--primary">Save Configuration</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
